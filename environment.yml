@@ -1,0 +1,11 @@
+name: pyspark_plot
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pandas>=2.0.0
+  - pyarrow
+  - matplotlib
+  - seaborn
+  - plotly
+  - jupyter

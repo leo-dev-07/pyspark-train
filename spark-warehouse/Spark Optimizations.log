@@ -1,0 +1,43 @@
+lakehouse zones - transient zone (for streaming data), 
+                    raw zone (raw data persistency), 
+                    trusted zone (data ready for research),
+                    ,consumption zone (production data)
+
+First step of a pyspark optimization -
+    Guarantee the table is partitioned. Partitions avoid full data scanning before do queryes
+        Than filter very well the date
+        Aggregate the data if needed
+        To solve skiwness use coalesce to 
+
+Performance tunning:
+        Advantages of Fat executors (Executors with a large configuration):
+            Increased Parallelist:
+                If you have many of cores you can run many tasks and it can enhance performance. This is good when you need a significant data amount to be loaded.
+                If the resource is not managed well it can lead to inificient resource use if all cores are not being used.
+            Enhance Data Locality.:
+                With fewer data, large executors has mor chance to be processed on the node where is being stored, enhancing data locatity.
+                This reduces network traffic and improve overal app speed. But if a executor fails, has a big bad impact because each handles a 
+                large data amount, and recover from a fail can take longer.
+            
+
+
+https://medium.com/@hrushikeshkute/join-strategies-in-apache-spark-1bbc0a698896
+https://www.youtube.com/watch?v=pP-ohMzyFc4&list=PL9sbKmQTkW04QUP55qXJwaOO-2URMvGS_&index=3 
+Coalesce and Partition - https://medium.com/@omkarspatil2611/understanding-repartition-and-coalesce-in-apache-spark-41e9238da256
+                        https://www.youtube.com/watch?v=9tRyWZvdUMM&t=259s
+                        Using for data skiwness https://www.youtube.com/shorts/IcOeJDsxXJ0
+                        How to identify Skewness with salting https://www.youtube.com/watch?v=2oaTQl1YzCw
+                        Shuffle Partition Spark Optimization https://www.youtube.com/watch?v=q1LtBU_ca20
+                        Executor tunning: https://www.youtube.com/watch?v=mA96gUESVZc
+brodcast joins - Only use for large joins between little dimesion tables and fact tables (the fact must be partitioned for high efficiency). 
+                    This allows each node to perform the join locally without having to shuffle data.
+For very large data :
+    Shuffle Sort-Merge join - Shuffle: Both datasets are partitioned, and the partitions are shuffled such that matching keys from both datasets are on the same executor. 
+    For example, if the orders table has 9 partitions and the customer table has 2 partitions, 
+    Spark will create 200 partitions by default and redistribute the data across these partitions.
+                          Sort: After shuffling, both datasets are sorted by the join key. Sorting can be an expensive operation, but it makes the final merge faster.
+                          Merge: After sorting, Spark merges the rows with matching keys.
+    
+    shuffle hash join -Default implemented in versions above spark 3.x.x
+
+Data
